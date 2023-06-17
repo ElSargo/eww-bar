@@ -31,17 +31,20 @@
           buildInputs = with pkgs;
             buildInputs ++ [ cargo rustc gcc cmake glibc stdenv.cc bash ];
         };
-      in rec {
+      in {
 
-        overlays.default = (self: super: {
-          eww = {...}: defaultPackage;
-        });
+        overlays.default = (self: super: { eww = self.defaultPackage; });
 
-        defaultPackage = pkgs.writeScript "eww" ''
-          export PATH=$PATH:${pkgs.jq}/bin/:${pkgs.nushell}/bin/
-          export EWW_UTILS=${eww-utils}/bin/eww-utils
-          ${pkgs.eww-wayland}/bin/eww "$@"
-        '';
+        defaultPackage = pkgs.writeShellApplication {
+          name = "eww";
+
+          runtimeInputs = with pkgs; [ jq nushell ];
+
+          text = ''
+            export EWW_UTILS=${eww-utils}/bin/eww-utils
+            ${pkgs.eww-wayland}/bin/eww "$@"
+          '';
+        };
 
         devShells.default = pkgs.mkShell { inherit buildInputs; };
       });
