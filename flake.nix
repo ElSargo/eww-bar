@@ -31,9 +31,9 @@
           buildInputs = with pkgs;
             buildInputs ++ [ cargo rustc gcc cmake glibc stdenv.cc bash ];
         };
-      in {
+      in rec {
 
-        overlays.default = (self: super: { eww = self.defaultPackage; });
+        overlays.default = (self: super: { eww = defaultPackage; });
 
         defaultPackage = pkgs.writeShellApplication {
           name = "eww";
