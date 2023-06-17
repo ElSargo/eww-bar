@@ -33,10 +33,13 @@ struct Icon {
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
     let listener = Box::leak(Box::new(EventListener::new()));
-    listener.add_workspace_change_handler(on_workspace_change);
-    listener.add_window_open_handler(|_| on_window_event());
+    listener.add_active_monitor_change_handler(|_| on_window_event());
     listener.add_window_close_handler(|_| on_window_event());
     listener.add_window_moved_handler(|_| on_window_event());
+    listener.add_window_open_handler(|_| on_window_event());
+    listener.add_workspace_added_handler(on_workspace_change);
+    listener.add_workspace_change_handler(on_workspace_change);
+    listener.add_workspace_destroy_handler(on_workspace_change);
 
     let lisntner_handle = spawn(listener.start_listener_async());
     let update_handle = spawn(update());

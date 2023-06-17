@@ -2,23 +2,45 @@
   description = "Dev shell the project";
 
   inputs = {
-    fenix = {
-      url = "github:nix-community/fenix/monthly";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nixpkgs.url = "nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    naersk.url = "github:nix-community/naersk";
   };
-  outputs = { self, nixpkgs, flake-utils, fenix }:
+  outputs = { self, nixpkgs, flake-utils, naersk }:
+
     flake-utils.lib.eachDefaultSystem (system:
       let
+          buildInputs = with pkgs; [
+            rustc
+            rust-analyzer
+            clippy
+            cargo
+            lldb_9
+            sccache
+            mold
+            clang
+            eww-wayland
+            nushell
+            jc
+          ];
         pkgs = nixpkgs.legacyPackages.${system};
-        rust = fenix.packages.${system}.complete.toolchain;
+        naersk' = pkgs.callPackage naersk { };
+        eww-utils =  naersk'.buildPackage {
+          src = ./.;
+          nativeBuildInputs = with pkgs; [ protobuf ];
+          buildInputs = with pkgs; buildInputs ++ [ cargo rustc gcc cmake glibc stdenv.cc bash];
+        };
       in {
-        nixpkgs.overlays = [ fenix.overlays.complete ];
+
+        defaultPackage = pkgs.writeScript "eww"
+        ''
+        export PATH=$PATH:${pkgs.jq}/bin/:${pkgs.nushell}/bin/
+        export EWW_UTILS=${eww-utils}/bin/eww-utils
+        ${pkgs.eww-wayland}/bin/eww "$@"
+        '';
+        
         devShells.default = pkgs.mkShell {
-          buildInputs =
-            [ rust pkgs.lldb_9 pkgs.sccache pkgs.mold pkgs.clang pkgs.eww-wayland pkgs.nushell pkgs.jc];
+        inherit buildInputs;
         };
       });
 }

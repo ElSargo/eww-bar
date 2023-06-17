@@ -4,7 +4,7 @@
 (defpoll day :interval "1s" "date +%a")
 (defpoll daynum :interval "1s" "date +%d")
 (defpoll mon :interval "1s" "date +%b")
-(deflisten workspace-content :initial "" "./target/release/eww-utils")
+(deflisten workspace-content :initial "" "$EWW_UTILS")
 (deflisten battery :initial "50.1" "nu src/bat.nu")
 (deflisten mem :initial "50.0" "nu src/mem.nu")
 (deflisten nety :initial "󱛅" "nu src/network.nu")
@@ -52,8 +52,8 @@
       ; (button :onclick "hyprctl dispatch exec foot hx ~/Documents/Journal.md" :style "padding-right: 9px;font-size: 1.6rem;color: #fb4934;" "")
       (button :onclick "hyprctl dispatch exec unixchadbookmarks ~/nix-files/bookmarks" :style "padding-right: 9px;font-size: 1.6rem;color: #b8bb26;" "")
       ; (button :onclick "hyprctl dispatch exec librewolf" :style "padding-right: 4px;font-size: 1.6rem;color: #fe8019;" "")
-      (button :onclick "hyprctl dispatch exec foot lf" :style "padding-right: 4px;font-size: 1.6rem;" "")
-      (button :onclick "hyprctl dispatch exec foot" :style "padding-right: 7px;font-size: 1.6rem;" "")
+      (button :onclick "hyprctl dispatch exec foot lf" :style "padding-right: 4px;font-size: 1.6rem;color: #fabd2f;" "")
+      ; (button :onclick "hyprctl dispatch exec foot" :style "padding-right: 7px;font-size: 1.6rem;" "")
       (button :onclick "hyprctl dispatch exec 'wofi --show drun'" :style "padding-right: 9px;font-size: 1.6rem;color: #83a598;" "")
 
     )
@@ -71,7 +71,7 @@
     (button
         :onclick 'date "+%a %d %b" | wl-copy & hyprctl notify -1 2000 "rgb(fb4934)" "Date copied!"'
       (box
-        :valign "center"
+        :valign "end"
         :orientation "v"
         (box :style "color: #83a598;font-size: 0.8rem;" day) 
         (box :style "color: #fabd2f" daynum) 
@@ -79,7 +79,7 @@
       )
     )
     (box
-      :valign "center"
+      :valign "start"
       :orientation "v"
       (box :style "color: #fb4934" hour) 
       (box :style "color: #fabd2f" min) 
@@ -98,7 +98,7 @@
     :halign "center"
     :valign "start"
     ( literal 
-      :style "padding-right: 3px;font-size: 1.27rem;"
+      :style "padding-right: 3px;font-size: 1.rem;"
       :valign "center"
       :halign "start"
       :content workspace-content 
