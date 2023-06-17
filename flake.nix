@@ -34,7 +34,7 @@
       in rec {
 
         overlays.default = (self: super: {
-          eww = defaultPackage;
+          eww = {...}: defaultPackage;
         });
 
         defaultPackage = pkgs.writeScript "eww" ''
