@@ -38,7 +38,7 @@
         defaultPackage = pkgs.writeShellApplication {
           name = "eww";
 
-          runtimeInputs = with pkgs; [ jq nushell ];
+          runtimeInputs = with pkgs; [ jc nushell ];
 
           text = ''
             export EWW_UTILS=${eww-utils}/bin/eww-utils
