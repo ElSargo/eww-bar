@@ -1,0 +1,16 @@
+[package]
+name = "eww-utils"
+version = "0.1.0"
+edition = "2021"
+
+[profile.release]
+opt-level = 'z' # Optimize for size
+
+[dependencies]
+anyhow = "1.0.71"
+hyprland = "0.3.3"
+lazy_static = "1.4.0"
+psutil = "3.2.2"
+serde = { version = "1.0.163", features = ["derive"] }
+tokio = "1.28.2"
+toml = "0.7.4"

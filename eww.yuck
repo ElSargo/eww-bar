@@ -1,0 +1,154 @@
+(defpoll hour :interval "1s" "date +%I")
+(defpoll min  :interval "1s" "date +%M")
+(defpoll sec  :interval "1s" "date +%S")
+(defpoll day :interval "1s" "date +%a")
+(defpoll daynum :interval "1s" "date +%d")
+(defpoll mon :interval "1s" "date +%b")
+(deflisten workspace-content :initial "" "./target/release/eww-utils")
+(deflisten battery :initial "50.1" "nu src/bat.nu")
+(deflisten mem :initial "50.0" "nu src/mem.nu")
+(deflisten nety :initial "󱛅" "nu src/network.nu")
+
+
+(defwidget top []
+  (box 
+    :style "margin: 1px; padding: 1px; border: 0px"
+    :orientation "v"
+    
+    ; :valign "end"
+
+    (box
+      :orientation "v"
+      (button
+        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem; min-width: 25px; min-height: 25px;margin-top: 5px;"
+        :onclick "hyprctl dispatch exec cpupower-gui"
+        (circular-progress
+          :value battery
+          :thickness 2
+          :style "color: #b8bb26;"
+        )
+      )
+      (button
+        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;"
+        :onclick "hyprctl dispatch exec foot htop"
+        (circular-progress 
+          :value mem
+          :thickness 2
+          :clockwise false
+          :style "color: #fabd2f;"
+        )
+      )
+      (button
+        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;"
+        :onclick "hyprctl dispatch exec foot htop"
+        (circular-progress 
+          :value {EWW_CPU.avg}
+          :thickness 2
+          :clockwise false
+          :style "color: #83a598;"
+        )
+      )
+      (button :onclick "hyprctl dispatch exec foot nmtui" :style "padding-right: 4px;font-size: 1.6rem;color: #fb4934;" "${nety}")
+      ; (button :onclick "hyprctl dispatch exec foot hx ~/Documents/Journal.md" :style "padding-right: 9px;font-size: 1.6rem;color: #fb4934;" "")
+      (button :onclick "hyprctl dispatch exec unixchadbookmarks ~/nix-files/bookmarks" :style "padding-right: 9px;font-size: 1.6rem;color: #b8bb26;" "")
+      ; (button :onclick "hyprctl dispatch exec librewolf" :style "padding-right: 4px;font-size: 1.6rem;color: #fe8019;" "")
+      (button :onclick "hyprctl dispatch exec foot lf" :style "padding-right: 4px;font-size: 1.6rem;" "")
+      (button :onclick "hyprctl dispatch exec foot" :style "padding-right: 7px;font-size: 1.6rem;" "")
+      (button :onclick "hyprctl dispatch exec 'wofi --show drun'" :style "padding-right: 9px;font-size: 1.6rem;color: #83a598;" "")
+
+    )
+  )
+)
+
+(defwidget time []
+  (box 
+    
+    :valign "center"
+    :orientation "v" 
+    :class "time"
+    :style "font-size: 1.1rem;"
+
+    (button
+        :onclick 'date "+%a %d %b" | wl-copy & hyprctl notify -1 2000 "rgb(fb4934)" "Date copied!"'
+      (box
+        :valign "center"
+        :orientation "v"
+        (box :style "color: #83a598;font-size: 0.8rem;" day) 
+        (box :style "color: #fabd2f" daynum) 
+        (box :style "color: #fb4934;font-size: 0.8rem" mon)
+      )
+    )
+    (box
+      :valign "center"
+      :orientation "v"
+      (box :style "color: #fb4934" hour) 
+      (box :style "color: #fabd2f" min) 
+      (box :style "color: #83a598" sec)
+    )
+    
+    
+    
+  )
+)
+
+(defwidget workspaces [] 
+  (box
+    ; :style "background: #3C3836;padding: 0px 8px 3px 8px ;border-radius: 0.4rem 0.4rem 1.0rem 1.0rem ;margin: 2px 0px 2px 0px ;font-size: 1.16rem;"
+    :orientation "h" 
+    :halign "center"
+    :valign "start"
+    ( literal 
+      :style "padding-right: 3px;font-size: 1.27rem;"
+      :valign "center"
+      :halign "start"
+      :content workspace-content 
+    )
+  )
+)
+
+
+(defwidget main []
+  (box
+      :style "padding: 0px;margin: 0px;border-radius: 20.0px;"
+    (box
+      :orientation "v"
+      (box :valign "start" (top) )
+      (box :valign "center" (time) )
+      (box :valign "end" (workspaces ) )
+    )
+  )
+)
+
+(defwindow bar
+  :monitor 0
+  :windowtype "dock"
+  :exclusive true
+  :geometry 
+    (geometry 
+      :x "5px"
+      :y "2%"
+      :width "25px"
+      :height "98%"
+      :orientation "v"
+      :anchor "center left"
+    )
+  :style "border-radius: 2.0rem"
+  (main)
+)
+
+(defwindow bar2
+  :monitor 1
+  :windowtype "dock"
+  :exclusive true
+  :geometry 
+    (geometry 
+      :x "5px"
+      :y "1%"
+      :width "25px"
+      :height "98%"
+      :orientation "v"
+      :anchor "center left"
+    )
+  :style "border-radius: 2.0rem"
+  (main)
+)

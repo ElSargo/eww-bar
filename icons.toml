@@ -1,0 +1,11 @@
+# Syntax "icon" = { gui = ["name of gui app n"], tui = ["name of tui app n"], ord = priorety ,other = false }
+# Only one icon can have other = true
+[icons]
+"󰣪" = { ord = 9, tui = ["cargo", "nix", "gcc", "gpp", "rustc"] }
+"" = { ord = 8, gui = ["librewolf", "firefox", "vivaldi", "vivaldi-stable", "chromium"] }
+"󰅩" = { ord = 7, tui = [".hx-wrapped", "hx", "vim", "nvim", "nano"] }
+"" = { ord = 6, gui = ["org.gnome.Nautilus"], tui = ["lf", "fx", "nnn"] }
+"" = { ord = 5, gui = ["kitty", "foot", "alacritty"] }
+"" = { ord = 4, gui = ["geary"] }
+"" = { other = true }
+
