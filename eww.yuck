@@ -12,13 +12,13 @@
 
 (defwidget top []
   (box 
-    :style "margin: 1px; padding: 1px; border: 0px"
+:vexpand true    :style "margin: 1px; padding: 1px; border: 0px"
     :orientation "v"
     
     ; :valign "end"
 
     (box
-      :orientation "v"
+:vexpand true      :orientation "v"
       (button
         :style "background: #3C3836;padding: 1px;border-radius: 1.4rem; min-width: 25px; min-height: 25px;margin-top: 5px;"
         :onclick "hyprctl dispatch exec cpupower-gui"
@@ -48,59 +48,58 @@
           :style "color: #83a598;"
         )
       )
-      (button :onclick "hyprctl dispatch exec foot nmtui" :style "padding-right: 4px;font-size: 1.6rem;color: #fb4934;" "${nety}")
+      ; (button :onclick "hyprctl dispatch exec foot nmtui" :style "padding-right: 4px;font-size: 1.6rem;color: #fb4934;" "${nety}")
       ; (button :onclick "hyprctl dispatch exec foot hx ~/Documents/Journal.md" :style "padding-right: 9px;font-size: 1.6rem;color: #fb4934;" "")
-      (button :onclick "hyprctl dispatch exec unixchadbookmarks ~/nix-files/bookmarks" :style "padding-right: 9px;font-size: 1.6rem;color: #b8bb26;" "")
+      ; (button :onclick "hyprctl dispatch exec unixchadbookmarks ~/nix-files/bookmarks" :style "padding-right: 9px;font-size: 1.6rem;color: #b8bb26;" "")
       ; (button :onclick "hyprctl dispatch exec librewolf" :style "padding-right: 4px;font-size: 1.6rem;color: #fe8019;" "")
-      (button :onclick "hyprctl dispatch exec foot lf" :style "padding-right: 4px;font-size: 1.6rem;color: #fabd2f;" "")
-      ; (button :onclick "hyprctl dispatch exec foot" :style "padding-right: 7px;font-size: 1.6rem;" "")
-      (button :onclick "hyprctl dispatch exec 'wofi --show drun'" :style "padding-right: 9px;font-size: 1.6rem;color: #83a598;" "")
+      ; (button :onclick "hyprctl dispatch exec foot lf" :style "padding-right: 4px;font-size: 1.6rem;color: #fabd2f;" "")
+      ; (button :onclick "hyprctl dispatch exec 'wofi --show drun'" :style "padding-right: 9px;font-size: 1.6rem;color: #83a598;" "")
 
     )
   )
 )
 
 (defwidget time []
-  (box 
-    
+
+  (box
+    :height "5%" 
+    :vexpand true
     :valign "center"
     :orientation "v" 
     :class "time"
     :style "font-size: 1.1rem;"
-
+    :space-evenly false
     (button
+        :vexpand true
         :onclick 'date "+%a %d %b" | wl-copy & hyprctl notify -1 2000 "rgb(fb4934)" "Date copied!"'
       (box
-        :valign "end"
+        :vexpand true
         :orientation "v"
         (box :style "color: #83a598;font-size: 0.8rem;" day) 
         (box :style "color: #fabd2f" daynum) 
         (box :style "color: #fb4934;font-size: 0.8rem" mon)
       )
     )
+    "-"
     (box
-      :valign "start"
+      :vexpand true
       :orientation "v"
       (box :style "color: #fb4934" hour) 
       (box :style "color: #fabd2f" min) 
       (box :style "color: #83a598" sec)
     )
-    
-    
-    
   )
 )
 
 (defwidget workspaces [] 
   (box
-    ; :style "background: #3C3836;padding: 0px 8px 3px 8px ;border-radius: 0.4rem 0.4rem 1.0rem 1.0rem ;margin: 2px 0px 2px 0px ;font-size: 1.16rem;"
     :orientation "h" 
     :halign "center"
-    :valign "start"
+    :vexpand true
+    :valign "end"
     ( literal 
-      :style "padding-right: 3px;font-size: 1.rem;"
-      :valign "center"
-      :halign "start"
+        :style "padding-right: 3px;font-size: 1.4rem;"
+      :vexpand true
       :content workspace-content 
     )
   )
@@ -109,12 +108,36 @@
 
 (defwidget main []
   (box
-      :style "padding: 0px;margin: 0px;border-radius: 20.0px;"
+    :vexpand true
+    :space-evenly false
+    :style "padding: 0px;margin: 0px;border-radius: 20.0px;"
     (box
+    :space-evenly false
+      :vexpand true
       :orientation "v"
-      (box :valign "start" (top) )
-      (box :valign "center" (time) )
-      (box :valign "end" (workspaces ) )
+      (box 
+        :height "5%" 
+        :vexpand true 
+        :valign "start" 
+        (top
+          :height "5%" 
+          :vexpand true 
+        ) 
+      )
+      (box  
+        :height "5%"  
+        :vexpand true 
+        (time
+          :height "5%" 
+          :vexpand true 
+        ) 
+      )
+      (box 
+        :vexpand true 
+        (workspaces 
+          :vexpand true 
+        ) 
+      )
     )
   )
 )

@@ -3,7 +3,6 @@ use hyprland::{
     data::{Client, Clients, Workspace},
     event_listener::EventListener,
     prelude::*,
-    shared::WorkspaceType,
 };
 use lazy_static::lazy_static;
 use psutil::process::Process;
@@ -37,9 +36,10 @@ async fn main() -> Result<()> {
     listener.add_window_close_handler(|_| on_window_event());
     listener.add_window_moved_handler(|_| on_window_event());
     listener.add_window_open_handler(|_| on_window_event());
-    listener.add_workspace_added_handler(on_workspace_change);
-    listener.add_workspace_change_handler(on_workspace_change);
-    listener.add_workspace_destroy_handler(on_workspace_change);
+
+    listener.add_workspace_added_handler(|_| on_window_event());
+    listener.add_workspace_change_handler(|_| on_window_event());
+    listener.add_workspace_destroy_handler(|_| on_window_event());
 
     let lisntner_handle = spawn(listener.start_listener_async());
     let update_handle = spawn(update());
@@ -98,16 +98,6 @@ fn on_window_event() {
         .map(|e| eprintln!("{:#?}", e));
 }
 
-fn on_workspace_change(id: WorkspaceType) {
-    let id = match id {
-        WorkspaceType::Regular(id) => match id.parse().ok() {
-            Some(id) => id,
-            None => return,
-        },
-        WorkspaceType::Special(_) => return,
-    };
-    render(id).err().map(|e| eprintln!("{:#?}", e));
-}
 
 fn render(id: i32) -> Result<()> {
     let clients = Clients::get()?.to_vec();
