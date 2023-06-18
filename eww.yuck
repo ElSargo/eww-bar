@@ -99,7 +99,11 @@
         (box :style "color: #fb4934;font-size: 0.8rem" mon)
       )
     )
-    "-"
+    (button
+      :onclick "fish -c toggle_eye_saver"
+      :style "padding-right: 5px"
+    "󰓠"
+    )      
     (box
       :vexpand true
       :orientation "v"
