@@ -12,15 +12,13 @@
 
 (defwidget top []
   (box 
-:vexpand true    :style "margin: 1px; padding: 1px; border: 0px"
+    :vexpand true    :style "margin: 1px; padding: 1px; border: 0px"
     :orientation "v"
-    
-    ; :valign "end"
-
     (box
-:vexpand true      :orientation "v"
+      :vexpand true      :orientation "v"
       (button
         :style "background: #3C3836;padding: 1px;border-radius: 1.4rem; min-width: 25px; min-height: 25px;margin-top: 5px;"
+        :class "prog"
         :onclick "hyprctl dispatch exec cpupower-gui"
         (circular-progress
           :value battery
@@ -30,6 +28,7 @@
       )
       (button
         :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;"
+        :class "prog"
         :onclick "hyprctl dispatch exec foot htop"
         (circular-progress 
           :value mem
@@ -41,6 +40,7 @@
       (button
         :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;"
         :onclick "hyprctl dispatch exec foot htop"
+        :class "prog"
         (circular-progress 
           :value {EWW_CPU.avg}
           :thickness 2
@@ -48,13 +48,32 @@
           :style "color: #83a598;"
         )
       )
-      ; (button :onclick "hyprctl dispatch exec foot nmtui" :style "padding-right: 4px;font-size: 1.6rem;color: #fb4934;" "${nety}")
-      ; (button :onclick "hyprctl dispatch exec foot hx ~/Documents/Journal.md" :style "padding-right: 9px;font-size: 1.6rem;color: #fb4934;" "")
-      ; (button :onclick "hyprctl dispatch exec unixchadbookmarks ~/nix-files/bookmarks" :style "padding-right: 9px;font-size: 1.6rem;color: #b8bb26;" "")
-      ; (button :onclick "hyprctl dispatch exec librewolf" :style "padding-right: 4px;font-size: 1.6rem;color: #fe8019;" "")
-      ; (button :onclick "hyprctl dispatch exec foot lf" :style "padding-right: 4px;font-size: 1.6rem;color: #fabd2f;" "")
-      ; (button :onclick "hyprctl dispatch exec 'wofi --show drun'" :style "padding-right: 9px;font-size: 1.6rem;color: #83a598;" "")
+      (button
+        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #fb4934"
+        :onclick "sudo pm-suspend"
+        :class "prog"
+        ""
+      )
 
+
+      (button
+        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 4.5px;color: #83a598;"
+        :onclick "sudo pm-hibernate "
+        :class "prog"
+        ""
+      )
+      (button
+        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #fabd2f"
+        :onclick "exec shutdown"
+        :class "prog"
+        "⏻"
+      )
+      (button
+        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #b8bb26"
+        :onclick "hyprctl dispatch exit"
+        :class "prog"
+        "󰿅"
+      )
     )
   )
 )
@@ -109,9 +128,13 @@
 (defwidget main []
   (box
     :vexpand true
+    :hexpand false
+    :width "25px";
+    :x "5px"
     :space-evenly false
     :style "padding: 0px;margin: 0px;border-radius: 20.0px;"
     (box
+    :class "main"
     :space-evenly false
       :vexpand true
       :orientation "v"
@@ -143,23 +166,28 @@
 )
 
 (defwindow bar
+  :class "bar"
   :monitor 0
   :windowtype "dock"
   :exclusive true
   :geometry 
     (geometry 
-      :x "5px"
-      :y "2%"
-      :width "25px"
-      :height "98%"
+      :x "0px"
+      :y "1%"
+      :width "40px"
+      :height "99%"
       :orientation "v"
       :anchor "center left"
     )
   :style "border-radius: 2.0rem"
-  (main)
+  (main 
+    :width "25px"
+    :hexpand false
+  )
 )
 
 (defwindow bar2
+  :class "bar"
   :monitor 1
   :windowtype "dock"
   :exclusive true

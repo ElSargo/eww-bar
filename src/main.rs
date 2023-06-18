@@ -190,7 +190,7 @@ fn icon(is_active: bool, info: &Option<&IconSet>) -> String {
 }
 
 fn render_button(id: i32, icon: &str, color: &str) -> String {
-    format!("(button :style 'color: {color};' :onclick 'hyprctl dispatch workspace {id}' {icon})")
+    format!("(button :class 'workspace' :style 'color: {color};' :onclick 'hyprctl dispatch workspace {id}' {icon})")
 }
 
 lazy_static! {
