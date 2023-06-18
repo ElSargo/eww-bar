@@ -74,6 +74,12 @@
         :class "prog"
         "󰿅"
       )
+      (button
+        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #83a598"
+        :onclick "hyprctl dispatch exec [float] foot nmtui"
+        :class "prog"
+        nety
+      )
     )
   )
 )
