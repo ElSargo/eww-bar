@@ -18,15 +18,30 @@ type WorkSpaceInfo = BTreeMap<i32, IconSet>;
 
 #[derive(Debug, Clone, Deserialize)]
 struct Config {
-    icons: BTreeMap<String, Icon>,
+    icons: BTreeMap<String, RawIcon>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
-struct Icon {
-    other: Option<bool>,
+#[derive(Debug, Clone, Deserialize, Ord, PartialEq, Eq, PartialOrd)]
+struct RawIcon {
     gui: Option<Vec<String>>,
     tui: Option<Vec<String>>,
     ord: Option<u32>,
+    font_size: Option<String>,
+    other: Option<bool>,
+    active: Option<bool>,
+    empty: Option<bool>,
+}
+
+#[derive(Debug, Clone,  Ord, PartialEq, Eq, PartialOrd)]
+struct Icon {
+    icon: &'static str,
+    gui: &'static [&'static str],
+    tui: &'static [&'static str],
+    ord: u32,
+    font_size: &'static str,
+    other: bool,
+    active: bool,
+    empty: bool,
 }
 
 #[tokio::main(flavor = "current_thread")]
@@ -58,7 +73,7 @@ fn find_nested_programs_in_termainals(
     let mut t = BTreeMap::new();
     for process in &processes {
         if let Ok(name) = process.name() {
-            if let Some(icon) = NAME_TO_ICON.get(&name) {
+            if let Some(icon) = NAME_TO_ICON.get(name.as_str()) {
                 if let Some(idx) = is_running_from_terminal(terminal_pids, process) {
                     t.entry(terminal_workspaces[idx])
                         .or_insert(BTreeSet::new())
@@ -129,7 +144,7 @@ fn render(id: i32) -> Result<()> {
     Ok(())
 }
 
-type IconSet = BTreeSet<String>;
+type IconSet = BTreeSet<&'static Icon>;
 
 fn get_workspace_icons(clients: &[Client]) -> BTreeMap<i32, IconSet> {
     let workspace_icons = clients
@@ -138,7 +153,7 @@ fn get_workspace_icons(clients: &[Client]) -> BTreeMap<i32, IconSet> {
         .fold(BTreeMap::new(), |mut acc, client| {
             let id = client.workspace.id;
             let ws = acc.entry(id).or_insert(BTreeSet::new());
-            let icon = CLASS_TO_ICON.get(&client.class).unwrap_or(&OTHER_ICON);
+            let icon = CLASS_TO_ICON.get(client.class.as_str()).unwrap_or(&OTHER_ICON);
             ws.insert(icon.clone());
             acc
         });
@@ -151,7 +166,8 @@ fn render_workspaces_yuck(active_workspace_id: i32, workspace_info: &WorkSpaceIn
             let is_active = active_workspace_id == id;
             let color = color(is_active, workspace_info, id);
             let icon = icon(is_active, &workspace_info.get(&id));
-            render_button(id, &icon, color)
+            let size = &icon.font_size;
+            render_button(id, &icon.icon, &format!("color: {color};font-size {size}"))
         })
         .collect::<String>();
 
@@ -169,59 +185,82 @@ fn color(is_active: bool, workspace_info: &WorkspacesToIcons, id: i32) -> &str {
     color
 }
 
-fn icon(is_active: bool, info: &Option<&IconSet>) -> String {
-    format!(
-        "'{}'",
+fn icon(is_active: bool, info: &Option<&IconSet>) -> &'static Icon{
         info.map_or_else(
             || if is_active {
-                "".to_string()
+                &*ACTIVE_ICON
             } else {
-                "".to_string()
+                &*EMPTY_ICON
             },
             |set| set
                 .iter()
-                .map(|icon| (icon, CONFIG.icons[icon].ord.unwrap_or(0)))
+                .map(|icon| (icon, icon.ord))
                 .max_by_key(|(_i, o)| o.clone())
                 .map(|(i, _o)| i)
                 .unwrap_or(&OTHER_ICON)
-                .clone()
         )
-    )
 }
 
-fn render_button(id: i32, icon: &str, color: &str) -> String {
-    format!("(button :class 'workspace' :style 'color: {color};' :onclick 'hyprctl dispatch workspace {id}' {icon})")
+fn render_button(id: i32, icon: &str, style: &str) -> String {
+    format!("(button :class 'workspace' :style '{style}' :onclick 'hyprctl dispatch workspace {id}' {icon})")
 }
+
+fn leak<T: ?Sized>(data: Box<T>) -> &'static T{
+    let data: &_ = Box::leak(data);
+    data
+}
+
 
 lazy_static! {
-    static ref CONFIG: Config =
-        toml::from_str(&std::fs::read_to_string("./icons.toml").unwrap()).unwrap();
-    static ref CLASS_TO_ICON: BTreeMap<String, String> = CONFIG
-        .icons
+
+    static ref CONFIG: &'static BTreeMap<&'static str, &'static Icon> = {
+        let config: Config = toml::from_str(&std::fs::read_to_string("./icons.toml").unwrap()).unwrap();
+        let mut map = BTreeMap::new();
+        let leak_slice = |opt: Option<Vec<String>>|{
+             leak(          
+                opt.unwrap_or_default().into_iter().map(|string| {
+                leak(string.into_boxed_str())
+                }).collect::<Vec<_>>().into_boxed_slice()
+            )
+        };
+        for (text, raw_icon) in config.icons.into_iter(){
+            let static_text = leak(text.into_boxed_str());
+            let icon = Icon{
+                    icon: static_text,
+                    gui:  leak_slice(raw_icon.gui),
+                    tui: leak_slice(raw_icon.tui),
+                    font_size: leak(raw_icon.font_size.unwrap_or("1.4rem".to_string()).into_boxed_str()),
+                    ord:raw_icon.ord.unwrap_or_default(),
+                    other:raw_icon.other.unwrap_or_default(),
+                    active:raw_icon.active.unwrap_or_default(),
+                    empty:raw_icon.empty.unwrap_or_default(),
+            };
+            map.insert(static_text,leak(Box::new(icon)))  ;
+        };
+        leak(Box::new(map))
+    };
+
+    static ref CLASS_TO_ICON: BTreeMap<&'static str, &'static Icon> = CONFIG.into_iter().flat_map(|(_text,icon)|
+        icon.gui.into_iter().map(move |class| (*class, *icon))
+    ).collect();
+
+    static ref NAME_TO_ICON: BTreeMap<&'static str, &'static Icon> = CONFIG.into_iter().flat_map(|(_text,icon)|
+        icon.tui.into_iter().map(move |name| (*name, *icon))
+    ).collect();
+
+    static ref OTHER_ICON: &'static Icon = CONFIG
         .iter()
-        .flat_map(|(icon, metadata)| {
-            metadata
-                .gui
-                .as_ref()
-                .map(|names| names.iter().map(|name| (name.clone(), icon.clone())))
-        })
-        .flatten()
-        .collect();
-    static ref NAME_TO_ICON: BTreeMap<String, String> = CONFIG
-        .icons
+        .find_map(|(_, metadata)| metadata.other.then_some(metadata))
+        .expect("Set at least one icon to be default");
+
+    static ref ACTIVE_ICON: &'static Icon = CONFIG
         .iter()
-        .flat_map(|(icon, metadata)| {
-            metadata
-                .tui
-                .as_ref()
-                .map(|names| names.iter().map(|name| (name.clone(), icon.clone())))
-        })
-        .flatten()
-        .collect();
-    static ref OTHER_ICON: String = CONFIG
-        .icons
+        .find_map(|(_, metadata)| metadata.active.then_some(metadata))
+        .expect("Set at least one icon to be default");
+
+    static ref EMPTY_ICON: &'static Icon = CONFIG
         .iter()
-        .find_map(|(icon, metadata)| metadata.other.and_then(|b| b.then_some(icon)))
-        .expect("Set at least one icon to be default")
-        .clone();
+        .find_map(|(_, metadata)| metadata.empty.then_some(metadata))
+        .expect("Set at least one icon to be default");
+        
 }
