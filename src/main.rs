@@ -167,7 +167,7 @@ fn render_workspaces_yuck(active_workspace_id: i32, workspace_info: &WorkSpaceIn
             let color = color(is_active, workspace_info, id);
             let icon = icon(is_active, &workspace_info.get(&id));
             let size = &icon.font_size;
-            render_button(id, &icon.icon, &format!("color: {color};font-size {size}"))
+            render_button(id, &icon.icon, &format!("color: {color};font-size: {size}"))
         })
         .collect::<String>();
 
