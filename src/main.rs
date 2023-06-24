@@ -202,7 +202,7 @@ fn icon(is_active: bool, info: &Option<&IconSet>) -> &'static Icon{
 }
 
 fn render_button(id: i32, icon: &str, style: &str) -> String {
-    format!("(button :class 'workspace' :style '{style}' :onclick 'hyprctl dispatch workspace {id}' {icon})")
+    format!("(button :class 'workspace' :style '{style}' :onclick 'hyprctl dispatch workspace {id}' '{icon}')")
 }
 
 fn leak<T: ?Sized>(data: Box<T>) -> &'static T{
