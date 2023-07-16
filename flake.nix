@@ -33,7 +33,7 @@
         };
       in rec {
 
-        overlays.default = (self: super: { eww = defaultPackage; });
+        overlays.default = (self: super: { eww-bar = defaultPackage; });
 
         defaultPackage = pkgs.writeShellApplication {
           name = "eww";
