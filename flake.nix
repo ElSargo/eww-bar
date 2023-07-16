@@ -33,9 +33,9 @@
         };
       in rec {
 
-        overlays.default = (self: super: { eww-bar = defaultPackage; });
+        overlays.default = (self: super: { eww-bar = packages.default ; });
 
-        defaultPackage = pkgs.writeShellApplication {
+        packages.default = pkgs.writeShellApplication {
           name = "eww";
 
           runtimeInputs = with pkgs; [ jc nushell pmutils ];
