@@ -17,7 +17,7 @@
     (box
       :vexpand true      :orientation "v"
       (button
-        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem; min-width: 25px; min-height: 25px;margin-top: 5px;"
+        :style "background: #282828;padding: 1px;border-radius: 1.4rem; min-width: 25px; min-height: 25px;margin-top: 5px;"
         :class "prog"
         :onclick "hyprctl dispatch exec cpupower-gui"
         (circular-progress
@@ -27,7 +27,7 @@
         )
       )
       (button
-        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;"
+        :style "background: #282828;padding: 1px;border-radius: 1.4rem;margin-top: 5px;"
         :class "prog"
         :onclick "hyprctl dispatch exec foot htop"
         (circular-progress 
@@ -38,7 +38,7 @@
         )
       )
       (button
-        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;"
+        :style "background: #282828;padding: 1px;border-radius: 1.4rem;margin-top: 5px;"
         :onclick "hyprctl dispatch exec foot htop"
         :class "prog"
         (circular-progress 
@@ -49,7 +49,7 @@
         )
       )
       (button
-        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #fb4934"
+        :style "background: #282828;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #fb4934"
         :onclick "sudo pm-suspend"
         :class "prog"
         ""
@@ -57,25 +57,25 @@
 
 
       (button
-        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 4.5px;color: #83a598;"
+        :style "background: #282828;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 4.5px;color: #83a598;"
         :onclick "sudo pm-hibernate "
         :class "prog"
         ""
       )
       (button
-        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #fabd2f"
+        :style "background: #282828;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #fabd2f"
         :onclick "exec shutdown"
         :class "prog"
         "⏻"
       )
       (button
-        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #b8bb26"
+        :style "background: #282828;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #b8bb26"
         :onclick "hyprctl dispatch exit"
         :class "prog"
         "󰿅"
       )
       (button
-        :style "background: #3C3836;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #83a598"
+        :style "background: #282828;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #83a598"
         :onclick "hyprctl dispatch exec [float] foot nmtui"
         :class "prog"
         nety
@@ -140,7 +140,6 @@
     :vexpand true
     :hexpand false
     :width "25px";
-    :x "5px"
     :space-evenly false
     :style "padding: 0px;margin: 0px;border-radius: 20.0px;"
     (box

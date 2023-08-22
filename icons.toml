@@ -1,10 +1,11 @@
 [icons]
 "󰣪" = { ord = 9, tui = ["cargo", "nix", "gcc", "gpp", "rustc"] }
 "" = { ord = 8, gui = ["librewolf", "firefox", "vivaldi", "vivaldi-stable", "chromium"] }
-"󰅩" = { ord = 7, tui = [".hx-wrapped", "hx", "vim", "nvim", "nano"] }
-"" = { ord = 6, gui = ["org.gnome.Nautilus"], tui = ["lf", "fx", "nnn"] }
-"" = { ord = 5, font_size = "1.0rem", gui = ["kitty", "foot", "alacritty"] }
-"" = { ord = 4, gui = ["geary"] }
+"󰝚" = { ord = 7, gui = [ "psst-gui"] }
+"󰅩" = { ord = 6, tui = [".hx-wrapped", "hx", "vim", "nvim", "nano"] }
+"" = { ord = 5, gui = ["org.gnome.Nautilus"], tui = ["lf", "fx", "nnn"] }
+"" = { ord = 4, font_size = "1.0rem", gui = ["kitty", "foot", "alacritty"] }
+"" = { ord = 3, gui = ["geary"] }
 "" = { other = true }
 "" = { active = true }
 "" = { empty = true }
