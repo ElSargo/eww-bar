@@ -50,7 +50,7 @@
       )
       (button
         :style "background: #282828;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #fb4934"
-        :onclick "sudo pm-suspend"
+        :onclick "systemctl suspend"
         :class "prog"
         ""
       )
@@ -58,13 +58,13 @@
 
       (button
         :style "background: #282828;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 4.5px;color: #83a598;"
-        :onclick "sudo pm-hibernate "
+        :onclick "systemctl hibernate "
         :class "prog"
         ""
       )
       (button
         :style "background: #282828;padding: 1px;border-radius: 1.4rem;margin-top: 5px;padding-right: 3px;color: #fabd2f"
-        :onclick "exec shutdown"
+        :onclick "systemctl shutdown"
         :class "prog"
         "⏻"
       )
@@ -184,7 +184,7 @@
       :x "0px"
       :y "1%"
       :width "40px"
-      :height "99%"
+      :height "100%"
       :orientation "v"
       :anchor "center left"
     )
@@ -205,7 +205,7 @@
       :x "5px"
       :y "1%"
       :width "25px"
-      :height "98%"
+      :height "100%"
       :orientation "v"
       :anchor "center left"
     )
