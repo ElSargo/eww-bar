@@ -37,7 +37,7 @@
 
           text = ''
             export EWW_UTILS=${eww-utils}/bin/eww-utils
-            ([ -d "$HOME/.config/eww" ] && ${pkgs.eww-wayland}/bin/eww "$@") || ${pkgs.eww-wayland}/bin/eww -c ./ "$@"
+            ([ -d "$HOME/.config/eww" ] && ${pkgs.eww-wayland}/bin/eww "$@") || ${pkgs.eww-wayland}/bin/eww -c "${self}/" "$@"
           '';
         };
 
