@@ -5,9 +5,9 @@
 (defpoll daynum :interval "1s" "date +%d")
 (defpoll mon :interval "1s" "date +%b")
 (deflisten workspace-content :initial "" "$EWW_UTILS")
-(deflisten battery :initial "50.1" "nu ~/.config/eww/src/bat.nu")
-(deflisten mem :initial "50.0" "nu ~/.config/eww/src/mem.nu")
-(deflisten nety :initial "󱛅" "nu ~/.config/eww/src/network.nu")
+(deflisten battery :initial "50.1" "nu ./src/bat.nu")
+(deflisten mem :initial "50.0" "nu ./src/mem.nu")
+(deflisten nety :initial "󱛅" "nu ./src/network.nu")
 
 
 (defwidget top []
