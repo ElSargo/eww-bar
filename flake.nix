@@ -7,29 +7,24 @@
     naersk.url = "github:nix-community/naersk";
   };
   outputs = { self, nixpkgs, flake-utils, naersk }:
-
     flake-utils.lib.eachDefaultSystem (system:
       let
-        buildInputs = with pkgs; [
-          rustc
-          rust-analyzer
-          clippy
-          cargo
+        devTools = with pkgs; [
           lldb_9
           sccache
+          rust-analyzer
+          clippy
+        ];
+        
+        buildInputs = with pkgs; [
+          cargo
           mold
-          clang
-          eww-wayland
-          nushell
-          jc
         ];
         pkgs = nixpkgs.legacyPackages.${system};
         naersk' = pkgs.callPackage naersk { };
         eww-utils = naersk'.buildPackage {
           src = ./.;
-          nativeBuildInputs = with pkgs; [ protobuf ];
-          buildInputs = with pkgs;
-            buildInputs ++ [ cargo rustc gcc cmake glibc stdenv.cc bash ];
+          buildInputs = buildInputs;
         };
       in rec {
 
@@ -42,11 +37,11 @@
 
           text = ''
             export EWW_UTILS=${eww-utils}/bin/eww-utils
-            ${pkgs.eww-wayland}/bin/eww "$@"
+            ([ -d "$HOME/.config/eww" ] && ${pkgs.eww-wayland}/bin/eww "$@") || ${pkgs.eww-wayland}/bin/eww -c ./ "$@"
           '';
         };
 
-        devShells.default = pkgs.mkShell { inherit buildInputs; };
+        devShells.default = pkgs.mkShell { buildInputs = buildInputs ++ devTools; };
       });
 }
 

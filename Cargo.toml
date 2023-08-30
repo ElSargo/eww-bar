@@ -8,7 +8,7 @@ opt-level = 'z' # Optimize for size
 
 [dependencies]
 anyhow = "1.0.71"
-hyprland = "0.3.3"
+hyprland = "0.3.9"
 lazy_static = "1.4.0"
 psutil = "3.2.2"
 serde = { version = "1.0.163", features = ["derive"] }
