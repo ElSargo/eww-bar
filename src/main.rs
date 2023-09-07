@@ -72,14 +72,12 @@ fn find_nested_programs_in_termainals(
     let processes: Vec<&Process> = processes.iter().flatten().collect();
     let mut t = BTreeMap::new();
     for process in &processes {
-        if let Ok(name) = process.name() {
-            if let Some(icon) = NAME_TO_ICON.get(name.as_str()) {
-                if let Some(idx) = is_running_from_terminal(terminal_pids, process) {
-                    t.entry(terminal_workspaces[idx])
-                        .or_insert(BTreeSet::new())
-                        .insert(icon.clone());
-                }
-            }
+        let icon = process.name().ok().and_then(|name| NAME_TO_ICON.get(name.as_str()) )  ;
+        
+        if let (Some(icon),Some(idx)) = (icon,is_running_from_terminal(terminal_pids, process)) {
+            t.entry(terminal_workspaces[idx])
+                .or_insert(BTreeSet::new())
+                .insert(*icon);
         }
     }
     Ok(t)
@@ -108,9 +106,8 @@ fn on_window_event() {
         None => return,
     }
     .id;
-    render(active_workspace)
-        .err()
-        .map(|e| eprintln!("{:#?}", e));
+    if let Some(e) = render(active_workspace)
+        .err() { eprintln!("{:#?}", e) }
 }
 
 
@@ -134,7 +131,7 @@ fn render(id: i32) -> Result<()> {
     for (id, icons) in nested.iter() {
         let set = workspace_icons.entry(*id).or_insert(BTreeSet::new());
         for icon in icons {
-            set.insert(icon.clone());
+            set.insert(icon);
         }
     }
 
@@ -154,7 +151,7 @@ fn get_workspace_icons(clients: &[Client]) -> BTreeMap<i32, IconSet> {
             let id = client.workspace.id;
             let ws = acc.entry(id).or_insert(BTreeSet::new());
             let icon = CLASS_TO_ICON.get(client.class.as_str()).unwrap_or(&OTHER_ICON);
-            ws.insert(icon.clone());
+            ws.insert(*icon);
             acc
         });
     workspace_icons
@@ -167,7 +164,7 @@ fn render_workspaces_yuck(active_workspace_id: i32, workspace_info: &WorkSpaceIn
             let color = color(is_active, workspace_info, id);
             let icon = icon(is_active, &workspace_info.get(&id));
             let size = &icon.font_size;
-            render_button(id, &icon.icon, &format!("color: {color};font-size: {size}"))
+            render_button(id, icon.icon, &format!("color: {color};font-size: {size}"))
         })
         .collect::<String>();
 
@@ -175,14 +172,14 @@ fn render_workspaces_yuck(active_workspace_id: i32, workspace_info: &WorkSpaceIn
 }
 type WorkspacesToIcons = BTreeMap<i32, IconSet>;
 fn color(is_active: bool, workspace_info: &WorkspacesToIcons, id: i32) -> &str {
-    let color = if is_active {
+    
+    if is_active {
         "#fb4934"
     } else if workspace_info.contains_key(&id) {
         "#83a598"
     } else {
         "#fabd2f"
-    };
-    color
+    } 
 }
 
 fn icon(is_active: bool, info: &Option<&IconSet>) -> &'static Icon{
@@ -195,7 +192,7 @@ fn icon(is_active: bool, info: &Option<&IconSet>) -> &'static Icon{
             |set| set
                 .iter()
                 .map(|icon| (icon, icon.ord))
-                .max_by_key(|(_i, o)| o.clone())
+                .max_by_key(|(_i, o)| *o)
                 .map(|(i, _o)| i)
                 .unwrap_or(&OTHER_ICON)
         )
@@ -240,12 +237,12 @@ lazy_static! {
         leak(Box::new(map))
     };
 
-    static ref CLASS_TO_ICON: BTreeMap<&'static str, &'static Icon> = CONFIG.into_iter().flat_map(|(_text,icon)|
-        icon.gui.into_iter().map(move |class| (*class, *icon))
+    static ref CLASS_TO_ICON: BTreeMap<&'static str, &'static Icon> = CONFIG.iter().flat_map(|(_text,icon)|
+        icon.gui.iter().map(move |class| (*class, *icon))
     ).collect();
 
-    static ref NAME_TO_ICON: BTreeMap<&'static str, &'static Icon> = CONFIG.into_iter().flat_map(|(_text,icon)|
-        icon.tui.into_iter().map(move |name| (*name, *icon))
+    static ref NAME_TO_ICON: BTreeMap<&'static str, &'static Icon> = CONFIG.iter().flat_map(|(_text,icon)|
+        icon.tui.iter().map(move |name| (*name, *icon))
     ).collect();
 
     static ref OTHER_ICON: &'static Icon = CONFIG
